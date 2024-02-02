@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
       vb.name = "controler"
       vb.memory = "2048"
       vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
     controler.vm.provision "shell" do |s|
       s.path = "install_ansible.sh"
@@ -25,13 +26,10 @@ Vagrant.configure("2") do |config|
       vb.name = "node"
       vb.memory = "2048"
       vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
     node.vm.provision "shell" do |shell|
       shell.path = "install_ansible.sh"
     end
-  end
-
-  config.vm.provider :virtualbox do |vb|
-    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
 end

@@ -1,34 +1,43 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+$script = <<-'SCRIPT'
+sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+service ssh restart
+SCRIPT
+
 Vagrant.configure("2") do |config|
-  config.vm.box = "geerlingguy/centos7"
-  config.vm.hostname = "master"
-  config.vm.network "private_network", type: "static", ip: "192.168.99.10"
-  config.vm.provider "virtualbox" do |vb|
-    vb.name = "master"
-    vb.memory = "4096"
-    vb.cpus = 2
+  config.vm.define "kmaster" do |kmaster|
+    kmaster.vm.box = "geerlingguy/ubuntu2004"
+    kmaster.vm.hostname = "kmaster"
+    kmaster.vm.box_url = "geerlingguy/ubuntu2004"
+    kmaster.vm.network "private_network", ip: "192.168.100.10"
+    kmaster.vm.provider "virtualbox" do |vb|
+      vb.name = "kmaster"
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+    kmaster.vm.provision "shell", inline: $script
+    kmaster.vm.provision "shell", path: "install_common.sh"
+    kmaster.vm.provision "shell", path: "install_master.sh"
   end
-  config.vm.provision :shell do |shell|
-    shell.path = "install_kubernetes.sh"
-    shell.args = ["master", "192.168.99.10"]
-  end
+  
   workers = 2
   (1..workers).each do |i|
-    config.vm.define "worker#{i}" do |node|
-      node.vm.box = "geerlingguy/centos7"
-      node.vm.hostname = "worker#{i}"
-      node.vm.network "private_network", type: "static", ip: "192.168.99.#{i}"
+    config.vm.define "kworker#{i}" do |node|
+      node.vm.box = "geerlingguy/ubuntu2004"
+      node.vm.hostname = "kworker#{i}"
+      node.vm.network "private_network", ip: "192.168.100.1#{i}"
       node.vm.provider "virtualbox" do |vb|
-        vb.name = "worker#{i}"
+        vb.name = "kworker#{i}"
         vb.memory = "2048"
         vb.cpus = 2
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       end
-      node.vm.provision :shell do |shell|
-        shell.path = "install_kubernetes.sh"
-        shell.args = ["worker", "192.168.99.10"]
-      end
+      node.vm.provision "shell", inline: $script
+      node.vm.provision "shell", path: "install_common.sh"
+      node.vm.provision "shell", path: "install_node.sh"
     end
   end
 end
