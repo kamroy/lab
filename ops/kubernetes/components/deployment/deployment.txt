@@ -1,0 +1,28 @@
+# create a deployment nginx for image nginx:1.18.10 with 2 replicas
+kubectl create deployment nginx  --image=nginx:1.18.0  --dry-run=client -o yaml > deploy.yaml
+#edit deploy.yaml and add replica to 2
+
+# get detail of deployment
+kubectl describe deploy nginx
+
+#Check how the deployment rollout is going
+kubectl rollout status deploy nginx
+
+#Check the rollout history and confirm that the replicas are OK
+kubectl rollout history deploy nginx
+
+#Undo the latest rollout
+kubectl rollout undo deploy nginx
+
+#Undo to the specify revision
+kubectl rollout undo deploy nginx --to-revision=2
+
+#Pause the rollout
+kubectl rollout pause deploy nginx
+
+#Resume the rollout
+kubectl rollout resume deploy nginx
+
+
+#scale deployment to 5 replicas
+kubectl scale deploy nginx --replicas=5

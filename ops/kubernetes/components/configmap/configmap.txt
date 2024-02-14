@@ -1,0 +1,32 @@
+#create a config map name config containing two values foo=lala and foo2=lolo
+kubectl create cm config --from-literal foo=lala --from-literal foo2=lolo
+
+#--from-file is used if values are store in file
+#--from-env-file is used if values are store in file with extension .env
+
+
+#display config map
+kubectl describe cm config
+
+
+#to add env variables contains into config map named option with values var5=val
+containers:
+- name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: option
+        valueFrom:
+            configMapKeyRef:
+                name: options
+                key: var5
+
+
+# Load configMap options as env variables into a new nginx pod
+containers:
+- name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    envFrom:
+    - configMapRef:
+       name: options

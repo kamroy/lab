@@ -1,0 +1,13 @@
+# create resource quota my-rq in namespace one
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: my-rq
+  namespace: one
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi

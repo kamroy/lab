@@ -1,0 +1,6 @@
+#create a service attach to a pod nginx
+kubectl run nginx --image=nginx --restart=Never --port=80 --expose
+
+#check creation of service and endpoint
+kubectl get svc nginx
+kubectl get ep nginx

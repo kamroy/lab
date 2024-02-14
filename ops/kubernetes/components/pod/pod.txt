@@ -1,0 +1,75 @@
+# Get pods of all namespace
+kubectl get pods -A 
+
+# Get all pods of namespace toto
+kubectl get pods -n toto
+
+# create pod name nginx using image nginx into namspace toto
+kubectl run nginx -n toto --image=nginx --restart=Never
+
+# Create a pod with image nginx called nginx into namspace toto and expose traffic on port 80 
+kubectl run nginx -n toto --image=nginx --restart=Never --port=80
+
+#Get nginx pod's ip
+kubectl get pod nginx -n toto -o wide
+
+# get nginx pod format yaml
+kubectl get pod nginx -n toto -o yaml
+
+# get pod logs
+kubectl logs nginx -n toto
+
+#If pod crashed and restarted, get logs about the previous instance
+kubectl logs nginx --previous -n toto
+
+#Exceute a simple shell on nginx pod
+kubectl exec -it nginx -n mynamespace -- /bin/sh
+
+#get labels of pods
+kubectl get po nginx --show-labels
+
+#change label of pod
+kubectl label po nginx1 app=v2 --overwrite
+
+
+#check annotaion of pod
+kubectl annotate pod nginx1 --list
+
+#delete pod nginx
+kubectl delete pod nginx
+
+
+#runs pod with the user ID 101
+spec:
+  securityContext:
+    runAsUser: 101
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+
+#runs pod having the capabilities "NET_ADMIN", "SYS_TIME" added to its single container
+spec:
+  securityContext:
+    capabilities:
+        add: ["NET_ADMIN", "SYS_TIME"]
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+
+
+#runs pods with resources requests
+
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:    
+        memory: "512Mi"
+        cpu: "200m"
+ 

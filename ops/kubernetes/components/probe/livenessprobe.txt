@@ -1,0 +1,47 @@
+#Create an nginx pod with a liveness probe that just runs the command 'ls'
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    resources: {}
+    livenessProbe:
+      exec:
+        command:
+        - ls
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+#Modify the pod.yaml file so that liveness probe starts kicking in after 5 seconds whereas the interval between probes would be 5 seconds
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    resources: {}
+    livenessProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      exec:
+        command:
+        - ls
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
