@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<-'SCRIPT'
+sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+service ssh restart
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.define "client" do |client|
+    client.vm.box = "geerlingguy/ubuntu2004"
+    client.vm.hostname = "client"
+    client.vm.box_url = "geerlingguy/ubuntu2004"
+    client.vm.network "private_network", ip: "192.168.100.20"
+    client.vm.provider "virtualbox" do |vb|
+      vb.name = "client"
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+    client.vm.provision "shell", inline: $script
+    client.vm.provision "shell", path: "install_docker.sh"
+    client.vm.provision "shell", path: "install_helm.sh"
+    client.vm.provision "shell", path: "install_kubectl.sh"
+    client.vm.provision "shell", path: "install_terraform.sh"
+  end
+end
