@@ -39,7 +39,8 @@ resource "docker_network" "romeonet" {
 }
 
 resource "docker_image" "nginx" {
-  name = "nginx:latest"
+  name          = data.docker_registry_image.nginx.name
+  pull_triggers = [ data.docker_registry_image.nginx.sha256_digest ]
 }
 
 resource "docker_container" "nginx" {

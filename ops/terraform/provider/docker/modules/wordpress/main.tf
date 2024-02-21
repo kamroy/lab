@@ -32,10 +32,14 @@ resource "docker_volume" "db_data" {
 resource "docker_network" "wordpressnet" {
   name = "wordpress_net"
 }
+resource "docker_image" "mysql" {
+  name          = data.docker_registry_image.mysql.name
+  pull_triggers = [ data.docker_registry_image.mysql.sha256_digest ]
+}
 
 resource "docker_container" "db" {
   name = "db"
-  image = "mysql:5.7"
+  image = docker_image.mysql.image_id
   restart = "always"
   network_mode = "wordpress_net"
   env = [
@@ -54,9 +58,14 @@ resource "docker_container" "db" {
   }
 }
 
+resource "docker_image" "wordpress" {
+  name          = data.docker_registry_image.wordpress.name
+  pull_triggers = [ data.docker_registry_image.wordpress.sha256_digest ]
+}
+
 resource "docker_container" "wordpress" {
   name = "wordpress"
-  image = "wordpress:latest"
+  image = docker_image.wordpress.image_id
   restart = "always"
   env = [
     "WORDPRESS_DB_HOST=db:3306",
