@@ -1,4 +1,7 @@
 resource "null_resource" "ssh_target" {
+  triggers = {
+    force = timestamp()
+  }
   connection {
     type        = "ssh"
     user        = var.ssh_user
@@ -16,7 +19,7 @@ resource "null_resource" "ssh_target" {
   }
 
   provisioner "file" {
-    source      = "modules/docker_install/startup-options.conf"
+    source      = "${path.module}/startup-options.conf"
     destination = "/tmp/startup-options.conf"
   }
 

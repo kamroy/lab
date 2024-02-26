@@ -16,7 +16,7 @@ resource "null_resource" "ssh_target" {
 }
 
 provider "docker" {
-  host = "tcp://${var.ssh_host}:2375"
+  host = "ssh://${var.ssh_user}@${var.ssh_host}:22"
 }
 
 resource "docker_volume" "romeovol" {

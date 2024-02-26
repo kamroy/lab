@@ -1,0 +1,22 @@
+
+
+# acces distant
+sudo apt-get install -y apt-transport-https ca-certificates curl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo apt-get install -y kubectl
+
+
+# Autocompletion
+
+apt install bash-completion
+
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+source .bashrc
+
+mkdir ~/.kube
+
+ssh vagrant@192.168.100.10 "sudo cat /etc/kubernetes/admin.conf" > .kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+chmod 600 ~/.kube/config
+export KUBECONFIG=$HOME/.kube/config
