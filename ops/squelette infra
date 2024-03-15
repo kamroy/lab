@@ -1,0 +1,6 @@
+# Squelette infra
+- Provisioning de l'infrastructure
+- Configuration automatique des machines de l'infrastructure
+- Dns et Service discovery
+- Scalabilité  implicite (auto-configuration)
+- Sécurité , Haute disponibilité
